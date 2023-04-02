@@ -16,9 +16,7 @@ export default function App({
       supabaseClient={supabase}
       initialSession={pageProps.initialSession}
     >
-      <div className="container mx-auto">
-        <Component {...pageProps} />
-      </div>
+      <Component {...pageProps} />
     </SessionContextProvider>
   );
 }
