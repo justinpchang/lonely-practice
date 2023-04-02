@@ -15,7 +15,7 @@ export default async function handler(
   const chat = new ChatOpenAI({ temperature: 0.7 });
   const chatPrompt = ChatPromptTemplate.fromPromptMessages([
     SystemMessagePromptTemplate.fromTemplate(
-      "Pretend you are a friendly Italian conversation practice tutor. Only reply with primary-school level Italian."
+      "Pretend you are a friendly Italian conversation practice tutor. Only reply with Italian that a 5-year-old would understand."
     ),
     HumanMessagePromptTemplate.fromTemplate("{input}"),
   ]);
