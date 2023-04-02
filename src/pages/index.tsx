@@ -3,6 +3,7 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 import Account from "@/components/Account";
 import Navbar from "@/components/Navbar";
+import Chat from "@/components/Chat/Chat";
 
 const Home = () => {
   const session = useSession();
@@ -22,12 +23,10 @@ const Home = () => {
           />
         </div>
       ) : (
-        <>
+        <div className="flex flex-col h-screen">
           <Navbar />
-          <div className="container mx-auto mt-6 px-6">
-            <Account session={session} />
-          </div>
-        </>
+          <Chat />
+        </div>
       )}
     </>
   );
