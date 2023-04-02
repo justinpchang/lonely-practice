@@ -3,6 +3,33 @@ import Message from "./Message";
 
 export default function Chat() {
   const [inputValue, setInputValue] = useState("");
+  const [messages, setMessages] = useState<
+    { content: string; isFromUser: boolean }[]
+  >([
+    { content: "Hi, how are you?", isFromUser: true },
+    { content: "I'm doing well, thanks for asking.", isFromUser: false },
+    { content: "What have you been up to lately?", isFromUser: true },
+    { content: "Not much, just working on some projects.", isFromUser: false },
+    {
+      content: "That sounds interesting. What kind of projects?",
+      isFromUser: true,
+    },
+    {
+      content: "Just some web development stuff. How about you?",
+      isFromUser: false,
+    },
+    { content: "I'm studying computer science.", isFromUser: true },
+    { content: "Oh cool, what are you learning right now?", isFromUser: false },
+    {
+      content: "I'm learning about algorithms and data structures.",
+      isFromUser: true,
+    },
+    {
+      content:
+        "That's really interesting! I wish I had more experience with that.",
+      isFromUser: false,
+    },
+  ]);
 
   const messagesBottomRef = useRef<HTMLDivElement>(null);
 
@@ -17,35 +44,11 @@ export default function Chat() {
   return (
     <div className="border border-slate-300 grow min-h-0 overflow-y-auto relative">
       <div className="divide-y divide-slate-300 mb-24 overflow-y-auto">
-        <Message isFromUser={true}>
-          This is a test message from the user.
-        </Message>
-        <Message isFromUser={false}>
-          This is a test message from the AI.
-        </Message>
-        <Message isFromUser={true}>
-          This is a test message from the user.
-        </Message>
-        <Message isFromUser={false}>
-          This is a test message from the AI.
-          <br />
-          Even a two line message.
-          <br />
-          Or a third.
-        </Message>
-        <Message isFromUser={true}>
-          This is a test message from the user.
-        </Message>
-        <Message isFromUser={false}>
-          This is a test message from the AI.
-        </Message>
-        <Message isFromUser={true}>
-          This is a test message from the User.
-          <br />
-          Even a two line message.
-          <br />
-          Or a third.
-        </Message>
+        {messages.map((message, i) => (
+          <Message key={i} isFromUser={message.isFromUser}>
+            {message.content}
+          </Message>
+        ))}
       </div>
       <div ref={messagesBottomRef} />
       <div className="fixed bottom-6 flex items-center w-full">
