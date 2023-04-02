@@ -14,7 +14,6 @@ const Home = () => {
           supabaseClient={supabase}
           appearance={{ theme: ThemeSupa }}
           providers={[]}
-          theme="dark"
         />
       ) : (
         <Account session={session} />
