@@ -1,4 +1,4 @@
-import { SyntheticEvent, useRef, useState } from "react";
+import { SyntheticEvent, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Message from "./Message";
 
@@ -9,6 +9,11 @@ export default function Chat() {
   >([]);
 
   const messagesBottomRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Clear conversation history
+    axios.delete("/api/chat");
+  }, []);
 
   const scrollToBottom = () => {
     messagesBottomRef.current?.scrollIntoView({ behavior: "smooth" });

@@ -25,33 +25,44 @@ export default async function handler(
   // Retrieve the conversation log and save the user's prompt
   const prompt = req.body.input as string;
   const conversationLog = new ConversationLog(userId);
-  const conversationHistory = await conversationLog.getConversation({
-    limit: 10,
-  });
-  await conversationLog.addMessage({ speaker: "USER", content: prompt });
 
-  // Generate a response
-  const llm = new OpenAI({
-    modelName: "gpt-3.5-turbo",
-    temperature: 0.7,
-    verbose: true,
-    callbacks: [new ConsoleCallbackHandler()],
-  });
-  const promptTemplate = new PromptTemplate({
-    template: PROMPT_RESPONSE_TEMPLATE,
-    inputVariables: ["conversationHistory", "prompt"],
-  });
-  const chain = new LLMChain({
-    llm,
-    prompt: promptTemplate,
-  });
-  const response = await chain.call({
-    conversationHistory,
-    prompt,
-  });
+  if (req.method === "POST") {
+    const conversationHistory = await conversationLog.getConversation({
+      limit: 10,
+    });
+    await conversationLog.addMessage({ speaker: "USER", content: prompt });
 
-  // Add response to conversation log
-  await conversationLog.addMessage({ speaker: "BOT", content: response.text });
+    // Generate a response
+    const llm = new OpenAI({
+      modelName: "gpt-3.5-turbo",
+      temperature: 0.7,
+      verbose: true,
+      callbacks: [new ConsoleCallbackHandler()],
+    });
+    const promptTemplate = new PromptTemplate({
+      template: PROMPT_RESPONSE_TEMPLATE,
+      inputVariables: ["conversationHistory", "prompt"],
+    });
+    const chain = new LLMChain({
+      llm,
+      prompt: promptTemplate,
+    });
+    const response = await chain.call({
+      conversationHistory,
+      prompt,
+    });
 
-  res.status(200).json(response);
+    // Add response to conversation log
+    await conversationLog.addMessage({
+      speaker: "BOT",
+      content: response.text,
+    });
+
+    res.status(200).json(response);
+  } else if (req.method === "DELETE") {
+    await conversationLog.clearConversation();
+    res.status(200).json({ message: "Conversation cleared" });
+  } else {
+    res.status(405).json({ message: "Method not allowed" });
+  }
 }
