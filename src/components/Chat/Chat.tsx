@@ -1,64 +1,63 @@
-import { SyntheticEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import Message from "./Message";
+import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
+import {
+  ChatContainer,
+  MessageList,
+  MessageInput,
+  Message,
+  TypingIndicator,
+} from "@chatscope/chat-ui-kit-react";
 
 export default function Chat() {
-  const [inputValue, setInputValue] = useState("");
   const [messages, setMessages] = useState<
     { content: string; isFromUser: boolean }[]
   >([]);
-
-  const messagesBottomRef = useRef<HTMLDivElement>(null);
+  const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
     // Clear conversation history
     axios.delete("/api/chat");
   }, []);
 
-  const scrollToBottom = () => {
-    messagesBottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const sendMessage = async (e: SyntheticEvent, message: string) => {
-    e.preventDefault();
-    setInputValue("");
+  const sendMessage = async (message: string) => {
+    setIsTyping(true);
     const newMessages = [...messages, { content: message, isFromUser: true }];
     setMessages(newMessages);
-    scrollToBottom();
     const response = (
       await axios.post("/api/chat", {
         input: message,
       })
     ).data.text;
+    setIsTyping(false);
     setMessages([...newMessages, { content: response, isFromUser: false }]);
-    scrollToBottom();
   };
 
   return (
-    <div className="border border-slate-300 grow min-h-0 overflow-y-auto relative">
-      <div className="divide-y divide-slate-300 mb-24 overflow-y-auto">
-        {messages.map((message, i) => (
-          <Message key={i} isFromUser={message.isFromUser}>
-            {message.content}
-          </Message>
-        ))}
-      </div>
-      <div ref={messagesBottomRef} />
-      <div className="fixed bottom-6 flex items-center w-full">
-        <form
-          onSubmit={(e) => sendMessage(e, inputValue)}
-          className="w-[90vw] mx-auto flex justify-between p-3 m-3 bg-white border border-slate-200 rounded-md shadow-2xl"
+    <div className="position-relative h-full mt-3">
+      <ChatContainer>
+        <MessageList
+          typingIndicator={
+            isTyping && <TypingIndicator content="Partner is typing" />
+          }
         >
-          <input
-            className="grow focus:outline-none"
-            type="text"
-            placeholder="Send a message..."
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-          />
-          <button type="submit">Send</button>
-        </form>
-      </div>
+          {messages.map((message, i) => (
+            <Message
+              key={i}
+              model={{
+                message: message.content,
+                direction: message.isFromUser ? "outgoing" : "incoming",
+                position: "single",
+              }}
+            />
+          ))}
+        </MessageList>
+        <MessageInput
+          placeholder="Type message here"
+          attachButton={false}
+          onSend={(innerHtml, textContent) => sendMessage(textContent)}
+        />
+      </ChatContainer>
     </div>
   );
 }
