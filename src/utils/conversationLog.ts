@@ -1,8 +1,8 @@
 import { supabase } from "./supabaseClient";
 
 class ConversationLog {
-  constructor(public profileId: string) {
-    this.profileId = profileId;
+  constructor(public userId: string) {
+    this.userId = userId;
   }
 
   public async addMessage({
@@ -14,7 +14,7 @@ class ConversationLog {
   }) {
     const { error } = await supabase
       .from("conversations")
-      .insert({ speaker, content, profile_id: this.profileId });
+      .insert({ speaker, content, user_id: this.userId });
     if (error) {
       console.error(`Error adding message: ${error.toString()}`);
     }
@@ -28,7 +28,7 @@ class ConversationLog {
     const { data, error } = await supabase
       .from("conversations")
       .select("speaker, content")
-      .eq("profile_id", this.profileId)
+      .eq("user_id", this.userId)
       .order("created_at", { ascending: false })
       .limit(limit);
 
@@ -46,7 +46,7 @@ class ConversationLog {
     const { error } = await supabase
       .from("conversations")
       .delete()
-      .eq("profile_id", this.profileId);
+      .eq("user_id", this.userId);
 
     if (error) {
       console.error(`Error deleting conversation: ${error.toString()}`);

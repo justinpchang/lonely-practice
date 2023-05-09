@@ -1,33 +1,56 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ChatOpenAI } from "langchain/chat_models";
-import {
-  ChatPromptTemplate,
-  SystemMessagePromptTemplate,
-  HumanMessagePromptTemplate,
-} from "langchain/prompts";
-import { ConversationChain } from "langchain/chains";
-import { BufferMemory } from "langchain/memory";
+import { OpenAI } from "langchain/llms/openai";
+import { PromptTemplate } from "langchain/prompts";
+import { LLMChain } from "langchain/chains";
+import { ConversationLog } from "@/utils/conversationLog";
+import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
+import { PROMPT_RESPONSE_TEMPLATE } from "@/utils/templates";
+import { ConsoleCallbackHandler } from "langchain/callbacks";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const chat = new ChatOpenAI({ temperature: 0.7 });
-  const chatPrompt = ChatPromptTemplate.fromPromptMessages([
-    SystemMessagePromptTemplate.fromTemplate(
-      "Pretend you are a friendly French conversation practice tutor. Only reply with French that a 5-year-old would understand."
-    ),
-    HumanMessagePromptTemplate.fromTemplate("{input}"),
-  ]);
-  const chain = new ConversationChain({
-    memory: new BufferMemory({ returnMessages: true, memoryKey: "history" }),
-    prompt: chatPrompt,
-    llm: chat,
+  // Get user info from session
+  const supabaseServerClient = createServerSupabaseClient({
+    req,
+    res,
+  });
+  const {
+    data: { user },
+  } = await supabaseServerClient.auth.getUser();
+  // TODO: Reject unauthenticated requests
+  const userId = user!.id;
+
+  // Retrieve the conversation log and save the user's prompt
+  const prompt = req.body.input as string;
+  const conversationLog = new ConversationLog(userId);
+  const conversationHistory = await conversationLog.getConversation({
+    limit: 10,
+  });
+  await conversationLog.addMessage({ speaker: "USER", content: prompt });
+
+  // Generate a response
+  const llm = new OpenAI({
+    temperature: 0.7,
+    verbose: true,
+    callbacks: [new ConsoleCallbackHandler()],
+  });
+  const promptTemplate = new PromptTemplate({
+    template: PROMPT_RESPONSE_TEMPLATE,
+    inputVariables: ["conversationHistory", "prompt"],
+  });
+  const chain = new LLMChain({
+    llm,
+    prompt: promptTemplate,
+  });
+  const response = await chain.call({
+    conversationHistory,
+    prompt,
   });
 
-  const response = await chain.call({
-    input: req.query.input,
-  });
+  // Add response to conversation log
+  await conversationLog.addMessage({ speaker: "BOT", content: response.text });
 
   res.status(200).json(response);
 }

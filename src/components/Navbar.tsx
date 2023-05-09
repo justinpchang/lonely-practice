@@ -1,4 +1,4 @@
-import { Database } from "@/types/supabase";
+import { Database } from "@/types/supabase.types";
 import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
 
 export default function Navbar() {

@@ -1,33 +1,6 @@
-import { SyntheticEvent, useEffect, useRef, useState } from "react";
+import { SyntheticEvent, useRef, useState } from "react";
 import axios from "axios";
 import Message from "./Message";
-import { flushSync } from "react-dom";
-
-const DEBUG_MESSAGES = [
-  { content: "Hi, how are you?", isFromUser: true },
-  { content: "I'm doing well, thanks for asking.", isFromUser: false },
-  { content: "What have you been up to lately?", isFromUser: true },
-  { content: "Not much, just working on some projects.", isFromUser: false },
-  {
-    content: "That sounds interesting. What kind of projects?",
-    isFromUser: true,
-  },
-  {
-    content: "Just some web development stuff. How about you?",
-    isFromUser: false,
-  },
-  { content: "I'm studying computer science.", isFromUser: true },
-  { content: "Oh cool, what are you learning right now?", isFromUser: false },
-  {
-    content: "I'm learning about algorithms and data structures.",
-    isFromUser: true,
-  },
-  {
-    content:
-      "That's really interesting! I wish I had more experience with that.",
-    isFromUser: false,
-  },
-];
 
 export default function Chat() {
   const [inputValue, setInputValue] = useState("");
@@ -51,7 +24,7 @@ export default function Chat() {
       await axios.post("/api/chat", {
         input: message,
       })
-    ).data.response;
+    ).data.text;
     setMessages([...newMessages, { content: response, isFromUser: false }]);
     scrollToBottom();
   };

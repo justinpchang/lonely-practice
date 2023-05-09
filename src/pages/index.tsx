@@ -1,13 +1,12 @@
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { useSession, useSupabaseClient } from "@supabase/auth-helpers-react";
-import Account from "@/components/Account";
+import { useSession } from "@supabase/auth-helpers-react";
 import Navbar from "@/components/Navbar";
 import Chat from "@/components/Chat/Chat";
+import { supabase } from "@/utils/supabaseClient";
 
 const Home = () => {
   const session = useSession();
-  const supabase = useSupabaseClient();
 
   return (
     <>
