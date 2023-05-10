@@ -4,6 +4,7 @@ import { SessionContextProvider, Session } from "@supabase/auth-helpers-react";
 import type { AppProps } from "next/app";
 
 import "@/styles/globals.css";
+import "@/styles/chat.scss";
 
 export default function App({
   Component,

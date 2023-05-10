@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 import {
   ChatContainer,
   MessageList,
@@ -9,10 +8,15 @@ import {
   TypingIndicator,
 } from "@chatscope/chat-ui-kit-react";
 
+import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
+
 export default function Chat() {
   const [messages, setMessages] = useState<
     { content: string; isFromUser: boolean }[]
   >([]);
+  const [corrections, setCorrections] = useState<{
+    [original: string]: string;
+  }>({});
   const [isTyping, setIsTyping] = useState(false);
 
   useEffect(() => {
@@ -24,6 +28,18 @@ export default function Chat() {
     setIsTyping(true);
     const newMessages = [...messages, { content: message, isFromUser: true }];
     setMessages(newMessages);
+
+    // Get correction async
+    axios
+      .post("/api/correction", { input: message })
+      .then(({ data: { text } }) => {
+        setCorrections({
+          ...corrections,
+          [message]: text,
+        });
+      });
+
+    // Get response sync
     const response = (
       await axios.post("/api/chat", {
         input: message,
@@ -42,14 +58,27 @@ export default function Chat() {
           }
         >
           {messages.map((message, i) => (
-            <Message
-              key={i}
-              model={{
-                message: message.content,
-                direction: message.isFromUser ? "outgoing" : "incoming",
-                position: "single",
-              }}
-            />
+            <>
+              <Message
+                key={i}
+                model={{
+                  message: message.content,
+                  direction: message.isFromUser ? "outgoing" : "incoming",
+                  position: "single",
+                }}
+              />
+              {message.isFromUser && corrections[message.content] && (
+                <Message
+                  key={`correction-${i}`}
+                  className="correction"
+                  model={{
+                    message: `Correction: ${corrections[message.content]}`,
+                    direction: "outgoing",
+                    position: "last",
+                  }}
+                />
+              )}
+            </>
           ))}
         </MessageList>
         <MessageInput

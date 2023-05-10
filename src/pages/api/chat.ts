@@ -35,7 +35,7 @@ export default async function handler(
     // Generate a response
     const llm = new OpenAI({
       modelName: "gpt-3.5-turbo",
-      temperature: 0.7,
+      temperature: 1,
       verbose: true,
       callbacks: [new ConsoleCallbackHandler()],
     });
