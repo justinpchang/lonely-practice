@@ -1,7 +1,6 @@
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
 import { useSession } from "@supabase/auth-helpers-react";
-import Navbar from "@/components/Navbar";
 import Chat from "@/components/Chat/Chat";
 import { supabase } from "@/utils/supabaseClient";
 
@@ -23,7 +22,6 @@ const Home = () => {
         </div>
       ) : (
         <div className="flex flex-col h-screen">
-          <Navbar />
           <Chat />
         </div>
       )}

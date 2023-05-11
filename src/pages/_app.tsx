@@ -5,6 +5,7 @@ import type { AppProps } from "next/app";
 
 import "@/styles/globals.css";
 import "@/styles/chat.scss";
+import { Sidebar } from "@/components/Sidebar";
 
 export default function App({
   Component,
@@ -17,7 +18,12 @@ export default function App({
       supabaseClient={supabase}
       initialSession={pageProps.initialSession}
     >
-      <Component {...pageProps} />
+      <div className="flex">
+        <Sidebar />
+        <div className="container">
+          <Component {...pageProps} />
+        </div>
+      </div>
     </SessionContextProvider>
   );
 }
