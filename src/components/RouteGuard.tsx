@@ -7,24 +7,22 @@ function RouteGuard({ children }: { children: JSX.Element }) {
   const user = useUser();
 
   useEffect(() => {
-    authCheck(router.asPath);
+    const authCheck = (url: string) => {
+      // TODO: Create dedicated login route
+      const publicPaths = ["/"];
+      const path = url.split("?")[0];
+      console.log(user);
+      if (!user && !publicPaths.includes(path)) {
+        router.push("/");
+      }
+    };
 
     router.events.on("routeChangeComplete", authCheck);
 
     return () => {
       router.events.off("routeChangeComplete", authCheck);
     };
-  }, []);
-
-  const authCheck = (url: string) => {
-    // TODO: Create dedicated login route
-    const publicPaths = ["/"];
-    const path = url.split("?")[0];
-    console.log(user);
-    if (!user && !publicPaths.includes(path)) {
-      router.push("/");
-    }
-  };
+  }, [user, router]);
 
   return children;
 }
