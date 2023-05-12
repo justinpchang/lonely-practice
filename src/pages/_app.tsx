@@ -5,25 +5,22 @@ import type { AppProps } from "next/app";
 
 import "@/styles/globals.css";
 import "@/styles/chat.scss";
-import { Sidebar } from "@/components/Sidebar";
+import { RouteGuard } from "@/components/RouteGuard";
 
 export default function App({
   Component,
   pageProps,
 }: AppProps<{ initialSession: Session }>) {
-  const [supabase] = useState(() => createBrowserSupabaseClient());
+  const [supabaseClient] = useState(() => createBrowserSupabaseClient());
 
   return (
     <SessionContextProvider
-      supabaseClient={supabase}
+      supabaseClient={supabaseClient}
       initialSession={pageProps.initialSession}
     >
-      <div className="flex">
-        <Sidebar />
-        <div className="container">
-          <Component {...pageProps} />
-        </div>
-      </div>
+      <RouteGuard>
+        <Component {...pageProps} />
+      </RouteGuard>
     </SessionContextProvider>
   );
 }

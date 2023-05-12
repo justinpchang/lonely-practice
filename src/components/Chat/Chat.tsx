@@ -10,7 +10,7 @@ import {
 
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
 
-export default function Chat() {
+function Chat() {
   const [messages, setMessages] = useState<
     { content: string; isFromUser: boolean }[]
   >([]);
@@ -50,7 +50,7 @@ export default function Chat() {
   };
 
   return (
-    <div className="position-relative h-full mt-3">
+    <div className="position-relative h-full">
       <ChatContainer>
         <MessageList
           typingIndicator={
@@ -90,3 +90,5 @@ export default function Chat() {
     </div>
   );
 }
+
+export { Chat };
