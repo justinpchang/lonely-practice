@@ -1,4 +1,4 @@
-import { MESSAGE_CORRECTION_TEMPLATE } from "@/utils/templates";
+import { MESSAGE_CORRECTION_TEMPLATE } from "@/constants/templates";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { ConsoleCallbackHandler } from "langchain/callbacks";
 import { LLMChain } from "langchain/chains";

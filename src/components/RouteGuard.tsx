@@ -1,3 +1,4 @@
+import { publicPaths } from "@/constants/publicPaths";
 import { useUser } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -9,11 +10,10 @@ function RouteGuard({ children }: { children: JSX.Element }) {
   useEffect(() => {
     const authCheck = (url: string) => {
       // TODO: Create dedicated login route
-      const publicPaths = ["/"];
       const path = url.split("?")[0];
       console.log(user);
       if (!user && !publicPaths.includes(path)) {
-        router.push("/");
+        router.push("/login");
       }
     };
 

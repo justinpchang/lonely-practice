@@ -4,7 +4,7 @@ import { PromptTemplate } from "langchain/prompts";
 import { LLMChain } from "langchain/chains";
 import { ConversationLog } from "@/utils/conversationLog";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
-import { PROMPT_RESPONSE_TEMPLATE } from "@/utils/templates";
+import { PROMPT_RESPONSE_TEMPLATE } from "@/constants/templates";
 import { ConsoleCallbackHandler } from "langchain/callbacks";
 
 export default async function handler(
