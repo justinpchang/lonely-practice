@@ -1,23 +1,17 @@
 import { useUser } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 function RouteGuard({ children }: { children: JSX.Element }) {
-  const [authorized, setAuthorized] = useState(false);
-
   const router = useRouter();
   const user = useUser();
 
   useEffect(() => {
     authCheck(router.asPath);
 
-    const hideContent = () => setAuthorized(false);
-
-    router.events.on("routeChangeStart", hideContent);
     router.events.on("routeChangeComplete", authCheck);
 
     return () => {
-      router.events.off("routeChangeStart", hideContent);
       router.events.off("routeChangeComplete", authCheck);
     };
   }, []);
@@ -26,15 +20,13 @@ function RouteGuard({ children }: { children: JSX.Element }) {
     // TODO: Create dedicated login route
     const publicPaths = ["/"];
     const path = url.split("?")[0];
+    console.log(user);
     if (!user && !publicPaths.includes(path)) {
-      setAuthorized(false);
       router.push("/");
-    } else {
-      setAuthorized(true);
     }
   };
 
-  return authorized ? children : null;
+  return children;
 }
 
 export { RouteGuard };
