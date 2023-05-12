@@ -50,44 +50,42 @@ function Chat() {
   };
 
   return (
-    <div className="position-relative h-full">
-      <ChatContainer>
-        <MessageList
-          typingIndicator={
-            isTyping && <TypingIndicator content="Partner is typing" />
-          }
-        >
-          {messages.map((message, i) => (
-            <>
+    <ChatContainer>
+      <MessageList
+        typingIndicator={
+          isTyping && <TypingIndicator content="Partner is typing" />
+        }
+      >
+        {messages.map((message, i) => (
+          <>
+            <Message
+              key={i}
+              model={{
+                message: message.content,
+                direction: message.isFromUser ? "outgoing" : "incoming",
+                position: "single",
+              }}
+            />
+            {message.isFromUser && corrections[message.content] && (
               <Message
-                key={i}
+                key={`correction-${i}`}
+                className="correction"
                 model={{
-                  message: message.content,
-                  direction: message.isFromUser ? "outgoing" : "incoming",
-                  position: "single",
+                  message: `Correction: ${corrections[message.content]}`,
+                  direction: "outgoing",
+                  position: "last",
                 }}
               />
-              {message.isFromUser && corrections[message.content] && (
-                <Message
-                  key={`correction-${i}`}
-                  className="correction"
-                  model={{
-                    message: `Correction: ${corrections[message.content]}`,
-                    direction: "outgoing",
-                    position: "last",
-                  }}
-                />
-              )}
-            </>
-          ))}
-        </MessageList>
-        <MessageInput
-          placeholder="Type message here"
-          attachButton={false}
-          onSend={(innerHtml, textContent) => sendMessage(textContent)}
-        />
-      </ChatContainer>
-    </div>
+            )}
+          </>
+        ))}
+      </MessageList>
+      <MessageInput
+        placeholder="Type message here"
+        attachButton={false}
+        onSend={(innerHtml, textContent) => sendMessage(textContent)}
+      />
+    </ChatContainer>
   );
 }
 
