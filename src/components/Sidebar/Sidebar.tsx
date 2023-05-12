@@ -2,9 +2,16 @@ import React from "react";
 import { SidebarRow } from "./SidebarRow";
 import Link from "next/link";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
+import { useRouter } from "next/router";
 
 function Sidebar() {
   const client = useSupabaseClient();
+  const router = useRouter();
+
+  const signOut = async () => {
+    await client.auth.signOut();
+    router.push("/login");
+  };
 
   return (
     <div className="flex flex-col h-screen p-3 bg-gray-800 shadow w-60">
@@ -24,11 +31,7 @@ function Sidebar() {
         </ul>
         <ul className="pt-2 pb-4 space-y-1">
           <SidebarRow name="About" href="/about" />
-          <SidebarRow
-            name="Sign out"
-            href="#"
-            onClick={() => client.auth.signOut()}
-          />
+          <SidebarRow name="Sign out" href="#" onClick={signOut} />
         </ul>
       </div>
     </div>
