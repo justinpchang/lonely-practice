@@ -9,7 +9,7 @@ function ChatPage() {
   return (
     <>
       <div
-        className={`h-full flex flex-col ${
+        className={`h-full max-h-screen flex flex-col ${
           isToolboxOpen ? `mr-80` : `mr-0`
         } ${TOOLBOX_ANIMATION}`}
       >
@@ -21,7 +21,7 @@ function ChatPage() {
             {isToolboxOpen ? "Close toolbox" : "Open toolbox"}
           </button>
         </div>
-        <div className="flex-1">
+        <div className="flex-1 overflow-scroll">
           <Chat />
         </div>
       </div>
