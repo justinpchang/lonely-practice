@@ -1,6 +1,6 @@
 import { Chat } from "@/components/Chat";
 import { Toolbox } from "@/components/Toolbox";
-import { TOOLBOX_ANIMATION, TOOLBOX_WIDTH } from "@/constants/toolbox";
+import { TOOLBOX_ANIMATION } from "@/constants/toolbox";
 import { useState } from "react";
 
 function ChatPage() {
@@ -10,7 +10,7 @@ function ChatPage() {
     <>
       <div
         className={`h-full flex flex-col ${
-          isToolboxOpen && `mr-[${TOOLBOX_WIDTH}]`
+          isToolboxOpen ? `mr-80` : `mr-0`
         } ${TOOLBOX_ANIMATION}`}
       >
         <div className="text-right">
@@ -18,7 +18,7 @@ function ChatPage() {
             className="m-2 py-2 px-2 bg-blue-200 rounded"
             onClick={() => setIsToolboxOpen(!isToolboxOpen)}
           >
-            {isToolboxOpen ? "Close" : "Open"} toolbox
+            {isToolboxOpen ? "Close toolbox" : "Open toolbox"}
           </button>
         </div>
         <div className="flex-1">
