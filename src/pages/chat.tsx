@@ -3,6 +3,7 @@ import { Highlighter } from "@/components/Highlighter";
 import { Toolbox } from "@/components/Toolbox";
 import { TOOLBOX_ANIMATION } from "@/constants/toolbox";
 import { useState } from "react";
+import { Tool } from "react-feather";
 
 function ChatPage() {
   const [isToolboxOpen, setIsToolboxOpen] = useState(false);
@@ -20,7 +21,7 @@ function ChatPage() {
               className="m-2 py-2 px-2 bg-blue-200 hover:bg-blue-300 rounded"
               onClick={() => setIsToolboxOpen(!isToolboxOpen)}
             >
-              Toolbox
+              <Tool />
             </button>
           )}
         </div>

@@ -3,6 +3,7 @@ import { SidebarRow } from "./SidebarRow";
 import Link from "next/link";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
 import { useRouter } from "next/router";
+import { Copy, Home, MessageSquare } from "react-feather";
 
 function Sidebar() {
   const client = useSupabaseClient();
@@ -25,13 +26,24 @@ function Sidebar() {
       </div>
       <div className="flex-1 flex flex-col justify-between mt-6">
         <ul className="pt-2 pb-4 space-y-1">
-          <SidebarRow name="Home" href="/" />
-          <SidebarRow name="Chat" href="/chat" />
-          <SidebarRow name="Deck" href="/deck" />
+          <SidebarRow href="/">
+            <Home color="white" />
+            Home
+          </SidebarRow>
+          <SidebarRow href="/chat">
+            <MessageSquare color="white" />
+            Chat
+          </SidebarRow>
+          <SidebarRow href="/deck">
+            <Copy color="white" />
+            Deck
+          </SidebarRow>
         </ul>
         <ul className="pt-2 pb-4 space-y-1">
-          <SidebarRow name="About" href="/about" />
-          <SidebarRow name="Sign out" href="#" onClick={signOut} />
+          <SidebarRow href="/about">About</SidebarRow>
+          <SidebarRow href="#" onClick={signOut}>
+            Sign out
+          </SidebarRow>
         </ul>
       </div>
     </div>

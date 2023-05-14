@@ -2,6 +2,7 @@ import { TABS, TOOLBOX_ANIMATION } from "@/constants/toolbox";
 import { Dictionary } from "./Dictionary";
 import ToolboxTab from "./ToolboxTab";
 import { useState } from "react";
+import { XSquare } from "react-feather";
 
 interface Props {
   isOpen: boolean;
@@ -31,12 +32,12 @@ function Toolbox({ isOpen, onClose }: Props) {
             </ToolboxTab>
           ))}
         </div>
-        <button
-          className="rounded-full mr-2 p-1 pb-2 h-6 w-6 bg-slate-200 hover:bg-slate-300 text-red-500 text-xl font-bold leading-[0]"
+        <XSquare
+          className="cursor-pointer mr-2"
           onClick={onClose}
-        >
-          x
-        </button>
+          size="28"
+          color="white"
+        />
       </div>
       <div className="flex-1">
         {TABS.map(({ name, Component }) => (
