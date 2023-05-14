@@ -14,18 +14,20 @@ function ChatPage() {
         } ${TOOLBOX_ANIMATION}`}
       >
         <div className="text-right">
-          <button
-            className="m-2 py-2 px-2 bg-blue-200 rounded"
-            onClick={() => setIsToolboxOpen(!isToolboxOpen)}
-          >
-            {isToolboxOpen ? "Close toolbox" : "Open toolbox"}
-          </button>
+          {!isToolboxOpen && (
+            <button
+              className="m-2 py-2 px-2 bg-blue-200 hover:bg-blue-300 rounded"
+              onClick={() => setIsToolboxOpen(!isToolboxOpen)}
+            >
+              Toolbox
+            </button>
+          )}
         </div>
         <div className="flex-1 overflow-scroll">
           <Chat />
         </div>
       </div>
-      <Toolbox isOpen={isToolboxOpen} />
+      <Toolbox isOpen={isToolboxOpen} onClose={() => setIsToolboxOpen(false)} />
     </>
   );
 }
