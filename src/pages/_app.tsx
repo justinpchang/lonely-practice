@@ -5,6 +5,8 @@ import type { AppProps } from "next/app";
 
 import "@/styles/globals.css";
 import "@/styles/chat.scss";
+import "@/styles/highlighter.scss";
+
 import { RouteGuard } from "@/components/RouteGuard";
 import { useRouter } from "next/router";
 import { Sidebar } from "@/components/Sidebar";

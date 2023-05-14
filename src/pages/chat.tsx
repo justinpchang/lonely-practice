@@ -1,4 +1,5 @@
 import { Chat } from "@/components/Chat";
+import { Highlighter } from "@/components/Highlighter";
 import { Toolbox } from "@/components/Toolbox";
 import { TOOLBOX_ANIMATION } from "@/constants/toolbox";
 import { useState } from "react";
@@ -23,9 +24,9 @@ function ChatPage() {
             </button>
           )}
         </div>
-        <div className="flex-1 overflow-scroll">
+        <Highlighter className="flex-1 overflow-scroll">
           <Chat />
-        </div>
+        </Highlighter>
       </div>
       <Toolbox isOpen={isToolboxOpen} onClose={() => setIsToolboxOpen(false)} />
     </>
