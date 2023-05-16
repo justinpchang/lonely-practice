@@ -30,7 +30,7 @@ export default function App({
       <RouteGuard>
         <div className="flex w-full">
           {shouldShowSidebar && <Sidebar />}
-          <div className="container">
+          <div className="w-full">
             <Component {...pageProps} />
           </div>
         </div>
