@@ -1,9 +1,8 @@
 import { Option } from "@/types/select";
 import { getLanguageNameFromCode } from "@/utils/language";
+import { SUPPORTED_LANGUAGES } from "./languages";
 
-const LANGUAGES = ["fr", "it"];
-
-export const LANGUAGE_OPTIONS: Option[] = LANGUAGES.map((code) => ({
+export const LANGUAGE_OPTIONS: Option[] = SUPPORTED_LANGUAGES.map((code) => ({
   value: code,
   label: getLanguageNameFromCode(code),
 }));
