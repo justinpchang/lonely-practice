@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SidebarRow } from "./SidebarRow";
 import Link from "next/link";
 import { useSupabaseClient } from "@supabase/auth-helpers-react";
@@ -11,6 +11,12 @@ function Sidebar() {
 
   const client = useSupabaseClient();
   const router = useRouter();
+
+  useEffect(() => {
+    if (router.pathname === "/chat") {
+      setIsNewChatModalOpen(true);
+    }
+  }, [router.pathname]);
 
   const signOut = async () => {
     await client.auth.signOut();
