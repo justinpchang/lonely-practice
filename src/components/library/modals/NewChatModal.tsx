@@ -5,7 +5,9 @@ import { useRouter } from "next/router";
 import Select from "react-select";
 import { LANGUAGE_OPTIONS } from "@/constants/chatOptions";
 import { Option } from "@/types/select";
-import { useSupabaseClient, useUser } from "@supabase/auth-helpers-react";
+import { getLanguageNameFromCode } from "@/utils/language";
+import { useGetLanguage } from "@/hooks/useGetLanguage";
+import { useSetLanguage } from "@/hooks/useSetLanguage";
 
 interface Props {
   isOpen: boolean;
@@ -14,32 +16,27 @@ interface Props {
 
 function NewChatModal({ isOpen, onClose }: Props) {
   const [language, setLanguage] = useState<Option | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const router = useRouter();
-  const user = useUser();
-  const client = useSupabaseClient();
+
+  const { isLoading: isCurrentLanguageLoading } = useGetLanguage({
+    onSuccess: (currentLanguage) =>
+      setLanguage({
+        value: currentLanguage,
+        label: getLanguageNameFromCode(currentLanguage),
+      }),
+  });
+
+  const { mutate, isLoading: isSubmitting } = useSetLanguage({
+    onSuccess: () => {
+      onClose();
+      router.push("/chat");
+    },
+  });
 
   const handleCreate = async (e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    setIsSubmitting(true);
-
-    let { error } = await client
-      .from("profiles")
-      .update({ language: language!.value })
-      .eq("id", user!.id);
-
-    if (error) {
-      alert("Something went wrong! Please check your console.");
-      console.error(error);
-      setIsSubmitting(false);
-      return;
-    }
-
-    setIsSubmitting(false);
-    onClose();
-    router.push("/chat");
+    mutate(language!.value);
   };
 
   return (
@@ -53,7 +50,7 @@ function NewChatModal({ isOpen, onClose }: Props) {
           <Button
             variant="primary"
             type="submit"
-            disabled={!language || isSubmitting}
+            disabled={!language || !isSubmitting}
           >
             Create
           </Button>
@@ -64,15 +61,19 @@ function NewChatModal({ isOpen, onClose }: Props) {
       }
     >
       <div className="min-h-[200px]">
-        <label className="flex items-center gap-8 text-md">
-          Language
-          <Select
-            placeholder="Select language"
-            options={LANGUAGE_OPTIONS}
-            value={language}
-            onChange={setLanguage}
-          />
-        </label>
+        {isCurrentLanguageLoading ? (
+          <p>Loading...</p>
+        ) : (
+          <label className="flex items-center gap-8 text-md">
+            Language
+            <Select
+              placeholder="Select language"
+              options={LANGUAGE_OPTIONS}
+              value={language}
+              onChange={setLanguage}
+            />
+          </label>
+        )}
       </div>
     </BaseModal>
   );
