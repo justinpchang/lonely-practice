@@ -2,11 +2,15 @@ import { Chat } from "@/components/Chat";
 import { Highlighter } from "@/components/Highlighter";
 import { Toolbox } from "@/components/Toolbox";
 import { TOOLBOX_ANIMATION } from "@/constants/toolbox";
+import { useGetLanguage } from "@/hooks/useGetLanguage";
+import { getLanguageNameFromCode } from "@/utils/language";
 import { useState } from "react";
 import { Tool } from "react-feather";
 
 function ChatPage() {
   const [isToolboxOpen, setIsToolboxOpen] = useState(false);
+
+  const { data: language } = useGetLanguage();
 
   return (
     <>
@@ -15,7 +19,8 @@ function ChatPage() {
           isToolboxOpen ? `mr-80` : `mr-0`
         } ${TOOLBOX_ANIMATION}`}
       >
-        <div className="text-right">
+        <div className="flex justify-between">
+          <p>Chatting in {getLanguageNameFromCode(language!)}...</p>
           {!isToolboxOpen && (
             <button
               className="m-2 py-2 px-2 bg-blue-200 hover:bg-blue-300 rounded"

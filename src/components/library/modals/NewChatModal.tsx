@@ -47,11 +47,7 @@ function NewChatModal({ isOpen, onClose }: Props) {
       onSubmit={handleCreate}
       buttons={
         <>
-          <Button
-            variant="primary"
-            type="submit"
-            disabled={!language || !isSubmitting}
-          >
+          <Button variant="primary" type="submit" disabled={!language}>
             Create
           </Button>
           <Button variant="secondary" onClick={onClose}>

@@ -6,6 +6,7 @@ import { ConversationLog } from "@/utils/conversationLog";
 import { createServerSupabaseClient } from "@supabase/auth-helpers-nextjs";
 import { PROMPT_RESPONSE_TEMPLATE } from "@/constants/templates";
 import { ConsoleCallbackHandler } from "langchain/callbacks";
+import { getLanguageNameFromCode } from "@/utils/language";
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,6 +22,9 @@ export default async function handler(
   } = await supabaseServerClient.auth.getUser();
   // TODO: Reject unauthenticated requests
   const userId = user!.id;
+
+  const languageCode = req.body.language as string;
+  const language = getLanguageNameFromCode(languageCode);
 
   // Retrieve the conversation log and save the user's prompt
   const prompt = req.body.input as string;
@@ -41,7 +45,7 @@ export default async function handler(
     });
     const promptTemplate = new PromptTemplate({
       template: PROMPT_RESPONSE_TEMPLATE,
-      inputVariables: ["conversationHistory", "prompt"],
+      inputVariables: ["conversationHistory", "prompt", "language"],
     });
     const chain = new LLMChain({
       llm,
@@ -50,6 +54,7 @@ export default async function handler(
     const response = await chain.call({
       conversationHistory,
       prompt,
+      language,
     });
 
     // Add response to conversation log

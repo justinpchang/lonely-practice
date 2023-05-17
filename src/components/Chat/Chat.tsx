@@ -9,6 +9,7 @@ import {
 } from "@chatscope/chat-ui-kit-react";
 
 import "@chatscope/chat-ui-kit-styles/dist/default/styles.min.css";
+import { useGetLanguage } from "@/hooks/useGetLanguage";
 
 function Chat() {
   const [messages, setMessages] = useState<
@@ -18,6 +19,8 @@ function Chat() {
     [original: string]: string;
   }>({});
   const [isTyping, setIsTyping] = useState(false);
+
+  const { data: language, isLoading: isLanguageLoading } = useGetLanguage();
 
   useEffect(() => {
     // Clear conversation history
@@ -31,7 +34,7 @@ function Chat() {
 
     // Get correction async
     axios
-      .post("/api/correction", { input: message })
+      .post("/api/correction", { input: message, language })
       .then(({ data: { text } }) => {
         setCorrections({
           ...corrections,
@@ -43,11 +46,16 @@ function Chat() {
     const response = (
       await axios.post("/api/chat", {
         input: message,
+        language,
       })
     ).data.text;
     setIsTyping(false);
     setMessages([...newMessages, { content: response, isFromUser: false }]);
   };
+
+  if (isLanguageLoading) {
+    return <h1>Loading...</h1>;
+  }
 
   return (
     <ChatContainer>

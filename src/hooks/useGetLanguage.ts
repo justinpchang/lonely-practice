@@ -9,12 +9,8 @@ export function useGetLanguage(options?: {
 }) {
   const user = useUser();
 
-  return useQuery(
-    [GET_LANGUAGE_QUERY_KEY, user!.id],
-    () => getLanguage(user!.id),
-    {
-      enabled: !!user,
-      ...options,
-    }
-  );
+  return useQuery(GET_LANGUAGE_QUERY_KEY, () => getLanguage(user!.id), {
+    enabled: Boolean(user?.id),
+    ...options,
+  });
 }
