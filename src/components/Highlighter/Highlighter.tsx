@@ -1,3 +1,4 @@
+import { getTranslation } from "@/requests/translation";
 import { ReactNode, useEffect, useRef, useState } from "react";
 
 interface Props {
@@ -9,7 +10,7 @@ function Highlighter({ className, children }: Props) {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [shouldShowPopover, setShouldShowPopover] = useState(false);
-  const [selectedText, setSelectedText] = useState("");
+  const [popoverText, setPopoverText] = useState("");
 
   const highlight = useRef<HTMLDivElement>(null);
 
@@ -17,7 +18,7 @@ function Highlighter({ className, children }: Props) {
     setShouldShowPopover(false);
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = async () => {
     const selection = window.getSelection();
     const selectedText = selection?.toString().trim();
 
@@ -60,12 +61,12 @@ function Highlighter({ className, children }: Props) {
       return;
     }
 
+    const translation = await getTranslation(selectedText, "en");
+
     setX(x + width / 2);
     setY(y + window.scrollY - 10);
-    setSelectedText(selectedText);
+    setPopoverText(translation);
     setShouldShowPopover(true);
-
-    console.log("Highlighted text: ", selectedText);
   };
 
   useEffect(() => {
@@ -85,9 +86,9 @@ function Highlighter({ className, children }: Props) {
           role="presentation"
           onMouseDown={(e) => e.preventDefault()}
         >
-          <span role="button" className="h-popover-item">
-            {selectedText}
-          </span>
+          <div role="button" className="text-white">
+            {popoverText}
+          </div>
         </div>
       )}
       {children}
