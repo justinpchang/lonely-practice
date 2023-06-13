@@ -17,11 +17,14 @@ export default async function handler(
   // TODO: Reject unauthenticated requests
 
   const text = req.body.input as string;
-  const target = req.body.language as string;
+  const source = req.body.language as string;
 
   // Use Google Translate API
   const translate = new Translate({ projectId: "lonely-practice" });
-  const [translation] = await translate.translate(text, target);
+  const [translation] = await translate.translate(text, {
+    from: source,
+    to: "en",
+  });
 
   res.status(200).json({ translation });
 }

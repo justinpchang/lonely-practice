@@ -1,3 +1,4 @@
+import { useGetLanguage } from "@/hooks/useGetLanguage";
 import { getTranslation } from "@/requests/translation";
 import { ReactNode, useEffect, useRef, useState } from "react";
 
@@ -13,6 +14,8 @@ function Highlighter({ className, children }: Props) {
   const [popoverText, setPopoverText] = useState("");
 
   const highlight = useRef<HTMLDivElement>(null);
+
+  const { data: language } = useGetLanguage();
 
   const hidePopover = () => {
     setShouldShowPopover(false);
@@ -61,7 +64,7 @@ function Highlighter({ className, children }: Props) {
       return;
     }
 
-    const translation = await getTranslation(selectedText, "en");
+    const translation = await getTranslation(selectedText, language!);
 
     setX(x + width / 2);
     setY(y + window.scrollY - 10);
@@ -86,7 +89,7 @@ function Highlighter({ className, children }: Props) {
           role="presentation"
           onMouseDown={(e) => e.preventDefault()}
         >
-          <div role="button" className="text-white">
+          <div role="button" className="text-white text-sm">
             {popoverText}
           </div>
         </div>
