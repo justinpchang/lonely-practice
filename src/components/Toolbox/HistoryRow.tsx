@@ -1,4 +1,4 @@
-import { HistoryEntry } from "@/stores/useHistoryStore";
+import { HistoryEntry, useHistoryStore } from "@/stores/useHistoryStore";
 import { Save, Trash2 } from "react-feather";
 
 interface Props {
@@ -6,6 +6,8 @@ interface Props {
 }
 
 function HistoryRow({ entry }: Props) {
+  const removeFromHistory = useHistoryStore((state) => state.removeFromHistory);
+
   const maxChars = 60;
   const originalStartIndex = entry.context.indexOf(entry.original);
   const originalEndIndex = originalStartIndex + entry.original.length;
@@ -26,6 +28,10 @@ function HistoryRow({ entry }: Props) {
   if (contextEndIndex < entry.context.length) {
     rightEllispes = true;
   }
+
+  const handleRemove = () => {
+    removeFromHistory(entry.id);
+  };
 
   return (
     <li className="flex flex-col p-2 border-b-2">
@@ -49,7 +55,7 @@ function HistoryRow({ entry }: Props) {
           <Trash2
             className="cursor-pointer text-white hover:text-red-500"
             size={16}
-            onClick={() => alert(`Deleting ${entry.original}`)}
+            onClick={handleRemove}
           />
         </div>
       </div>

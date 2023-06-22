@@ -10,12 +10,17 @@ export interface HistoryEntry {
 interface HistoryState {
   history: HistoryEntry[];
   addToHistory: (entry: HistoryEntry) => void;
+  removeFromHistory: (id: number) => void;
 }
 
 const useHistoryStore = create<HistoryState>((set) => ({
   history: [],
   addToHistory: (entry) =>
     set((state) => ({ history: [...state.history, entry] })),
+  removeFromHistory: (id) =>
+    set((state) => ({
+      history: state.history.filter((entry) => entry.id !== id),
+    })),
 }));
 
 export { useHistoryStore };
