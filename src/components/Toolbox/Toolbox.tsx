@@ -1,5 +1,4 @@
 import { TABS, TOOLBOX_ANIMATION } from "@/constants/toolbox";
-import { Dictionary } from "./Dictionary";
 import ToolboxTab from "./ToolboxTab";
 import { useState } from "react";
 import { XSquare } from "react-feather";

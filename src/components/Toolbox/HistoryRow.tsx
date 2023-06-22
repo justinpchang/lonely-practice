@@ -1,12 +1,8 @@
+import { HistoryEntry } from "@/stores/useHistoryStore";
 import { Save, Trash2 } from "react-feather";
 
 interface Props {
-  entry: {
-    id: number;
-    original: string;
-    context: string;
-    translation: string;
-  };
+  entry: HistoryEntry;
 }
 
 function HistoryRow({ entry }: Props) {

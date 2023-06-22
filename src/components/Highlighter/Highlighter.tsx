@@ -1,5 +1,7 @@
+import { END_SENTENCE_PUNCTUATION } from "@/constants/languages";
 import { useGetLanguage } from "@/hooks/useGetLanguage";
 import { getTranslation } from "@/requests/translation";
+import { useHistoryStore } from "@/stores/useHistoryStore";
 import { ReactNode, useEffect, useRef, useState } from "react";
 
 interface Props {
@@ -14,71 +16,118 @@ function Highlighter({ className, children }: Props) {
   const [popoverText, setPopoverText] = useState("");
 
   const highlight = useRef<HTMLDivElement>(null);
+  const lastSelectedText = useRef("");
 
   const { data: language } = useGetLanguage();
+  const addToHistory = useHistoryStore((state) => state.addToHistory);
 
   const hidePopover = () => {
     setShouldShowPopover(false);
   };
 
-  const handleMouseUp = async () => {
-    const selection = window.getSelection();
-    const selectedText = selection?.toString().trim();
+  useEffect(() => {
+    const handlePointerUp = async () => {
+      const selection = window.getSelection();
+      if (!selection) return;
+      const selectedText = selection.toString().trim();
 
-    if (!selectedText) {
-      hidePopover();
-      return;
-    }
+      if (!selectedText) {
+        hidePopover();
+        return;
+      }
 
-    const selectionRange = selection?.getRangeAt(0)!;
-    const startNode = selectionRange.startContainer.parentNode;
-    const endNode = selectionRange.endContainer.parentNode;
+      if (lastSelectedText.current === selectedText) {
+        return;
+      }
+      lastSelectedText.current = selectedText;
 
-    const highlightable = highlight.current;
-    const highlightableRegion = highlightable?.querySelector(".h-popable");
+      const selectionRange = selection.getRangeAt(0)!;
+      const startNode = selectionRange.startContainer.parentNode;
+      const endNode = selectionRange.endContainer.parentNode;
+      const highlightable = highlight.current;
+      const highlightableRegion = highlightable?.querySelector(".h-popable");
 
-    if (highlightableRegion) {
-      if (
-        !highlightableRegion.contains(startNode) ||
-        !highlightableRegion.contains(endNode)
+      if (highlightableRegion) {
+        if (
+          !highlightableRegion.contains(startNode) ||
+          !highlightableRegion.contains(endNode)
+        ) {
+          hidePopover();
+          return;
+        }
+      } else if (
+        !highlightable?.contains(startNode) ||
+        !highlightable?.contains(endNode)
       ) {
         hidePopover();
         return;
       }
-    } else if (
-      !highlightable?.contains(startNode) ||
-      !highlightable?.contains(endNode)
-    ) {
-      hidePopover();
-      return;
-    }
 
-    if (!startNode?.isSameNode(endNode)) {
-      hidePopover();
-      return;
-    }
+      if (!startNode?.isSameNode(endNode)) {
+        hidePopover();
+        return;
+      }
 
-    const { x, y, width } = selectionRange.getBoundingClientRect();
-    if (!width) {
-      hidePopover();
-      return;
-    }
+      const { x, y, width } = selectionRange.getBoundingClientRect();
+      if (!width) {
+        hidePopover();
+        return;
+      }
 
-    const translation = await getTranslation(selectedText, language!);
+      const translation = await getTranslation(selectedText, language!);
 
-    setX(x + width / 2);
-    setY(y + window.scrollY - 10);
-    setPopoverText(translation);
-    setShouldShowPopover(true);
-  };
+      // Find context of selection
+      let startIndex = 0;
+      for (let i = selection.anchorOffset - 1; i >= 0; i--) {
+        if (
+          END_SENTENCE_PUNCTUATION[language!].includes(
+            selection.anchorNode!.nodeValue!.charAt(i)!
+          )
+        ) {
+          startIndex = i + 1;
+          break;
+        }
+      }
+      let endIndex = 0;
+      for (
+        let i = selection.focusOffset;
+        i < selection.focusNode!.nodeValue!.length;
+        i++
+      ) {
+        if (
+          END_SENTENCE_PUNCTUATION[language!].includes(
+            selection.focusNode!.nodeValue!.charAt(i)!
+          )
+        ) {
+          endIndex = i + 1;
+          break;
+        }
+      }
+      const context = selection
+        .anchorNode!.nodeValue!.slice(startIndex, endIndex)
+        .trim();
 
-  useEffect(() => {
-    window.addEventListener("mouseup", handleMouseUp);
+      // Add to history
+      addToHistory({
+        id: Math.random(), // TODO: (justinpchang) Use id from database
+        original: selectedText,
+        context,
+        translation,
+      });
+
+      // Update popover with translation
+      setX(x + width / 2);
+      setY(y + window.scrollY - 10);
+      setPopoverText(translation);
+      setShouldShowPopover(true);
+    };
+
+    window.addEventListener("pointerup", handlePointerUp);
 
     return () => {
-      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener("pointerup", handlePointerUp);
     };
-  });
+  }, [addToHistory, language]);
 
   return (
     <div ref={highlight} className={className}>
